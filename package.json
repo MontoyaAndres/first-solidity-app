@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "hardhat run scripts/run.js",
-    "deploy": "npx hardhat run scripts/deploy.js --network localhost"
+    "deploy-localhost": "npx hardhat run scripts/deploy.js --network localhost",
+    "deploy-rinkeby": "npx hardhat run scripts/deploy.js --network rinkeby"
   },
   "repository": {
     "type": "git",

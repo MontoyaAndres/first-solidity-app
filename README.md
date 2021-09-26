@@ -14,7 +14,7 @@ node scripts/sample-script.js
 npx hardhat help
 ```
 
-https://app.buildspace.so/courses/CO02cf0f1c-f996-4f50-9669-cf945ca3fb0b/lessons/LEe9f04c2e-fe9c-4e87-81b2-efb677a1720c
+https://app.buildspace.so/courses/CO02cf0f1c-f996-4f50-9669-cf945ca3fb0b/lessons/LE9c2be71e-79e9-4392-b36f-f3ed89361b34
 
 DEPLOY TO TEST ENVIRONMENT:
 

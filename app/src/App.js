@@ -6,8 +6,9 @@ import WavePortal from './utils/WavePortal.json';
 export const App = () => {
   const [wavesAmount, setWavesAmount] = useState(0);
   const [currentAccount, setCurrentAccount] = useState('');
+  const [allWaves, setAllWaves] = useState([]);
   const [status, setStatus] = useState('idle');
-  const contractAddress = '0xc7D259Bb8Ee9281857897164AD7D444b007b7E5F';
+  const contractAddress = '0x1149001a0636bD3f06153a22f9D1cB6C65897Fa7';
   const contractABI = WavePortal.abi;
 
   useEffect(() => {
@@ -26,15 +27,28 @@ export const App = () => {
         signer
       );
 
-      let count = await waveportalContract.getTotalWaves();
+      const count = await waveportalContract.getTotalWaves();
+      const waves = await waveportalContract.getAllWaves();
+
+      let wavesCleaned = [];
+      waves.forEach(wave => {
+        wavesCleaned.push({
+          address: wave.waver,
+          timestamp: new Date(wave.timestamp * 1000),
+          message: wave.message,
+        });
+      });
+
+      console.log(wavesCleaned);
 
       setWavesAmount(count.toNumber());
+      setAllWaves(wavesCleaned);
     };
 
-    if (status === 'idle' || status === 'resolved') {
+    if (currentAccount && (status === 'idle' || status === 'resolved')) {
       getCurrentWaves();
     }
-  }, [status]);
+  }, [currentAccount, status]);
 
   const checkIfWalletIsConnected = () => {
     const { ethereum } = window;
@@ -77,7 +91,7 @@ export const App = () => {
 
       setStatus('pending');
 
-      const waveTxn = await waveportalContract.wave();
+      const waveTxn = await waveportalContract.wave('👋');
       console.log('Mining...', waveTxn.hash);
 
       await waveTxn.wait();
@@ -102,6 +116,20 @@ export const App = () => {
           Wave at Me
         </button>
       )}
+      {allWaves.map((wave, index) => (
+        <div
+          style={{
+            backgroundColor: 'OldLace',
+            marginTop: '16px',
+            padding: '8px',
+          }}
+          key={index}
+        >
+          <div>Address: {wave.address}</div>
+          <div>Time: {wave.timestamp.toString()}</div>
+          <div>Message: {wave.message}</div>
+        </div>
+      ))}
     </>
   );
 };
