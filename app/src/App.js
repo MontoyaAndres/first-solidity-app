@@ -8,7 +8,7 @@ export const App = () => {
   const [currentAccount, setCurrentAccount] = useState('');
   const [allWaves, setAllWaves] = useState([]);
   const [status, setStatus] = useState('idle');
-  const contractAddress = '0x1149001a0636bD3f06153a22f9D1cB6C65897Fa7';
+  const contractAddress = '0xe0Cc456FdafBd631D12eF6C650beeA22AdAC1eC6';
   const contractABI = WavePortal.abi;
 
   useEffect(() => {
@@ -43,6 +43,22 @@ export const App = () => {
 
       setWavesAmount(count.toNumber());
       setAllWaves(wavesCleaned);
+
+      /**
+       * Listen in for emitter events!
+       */
+      waveportalContract.on('NewWave', (from, timestamp, message) => {
+        console.log('NewWave', from, timestamp, message);
+
+        setAllWaves(prevState => [
+          ...prevState,
+          {
+            address: from,
+            timestamp: new Date(timestamp * 1000),
+            message: message,
+          },
+        ]);
+      });
     };
 
     if (currentAccount && (status === 'idle' || status === 'resolved')) {
@@ -91,7 +107,8 @@ export const App = () => {
 
       setStatus('pending');
 
-      const waveTxn = await waveportalContract.wave('👋');
+      // gasLimit: What this does is make the user pay a set amount of gas of 300,000. And, if they don't use all of it in the transaction they'll automatically be refunded.
+      const waveTxn = await waveportalContract.wave('👋', { gasLimit: 300000 });
       console.log('Mining...', waveTxn.hash);
 
       await waveTxn.wait();
